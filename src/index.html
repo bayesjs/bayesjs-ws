@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Example</title>
+</head>
+<body>
+  <form id="form">
+    <div>
+      <textarea id="payload" cols="80" rows="30" spellcheck="false"></textarea>
+    </div>
+    <div>
+      <button>Submit</button>
+    </div>
+  </form>
+  <script>
+    const form = document.getElementById('form');
+    const payload = document.getElementById('payload');
+
+    const defaultPayload = {
+      network: {
+        'RAIN': {
+          id: 'RAIN',
+          states: [ 'T', 'F' ],
+          parents: [],
+          cpt: { 'T': 0.2, 'F': 0.8 }
+        },
+        'SPRINKLER': {
+          id: 'SPRINKLER',
+          states: [ 'T', 'F' ],
+          parents: [ 'RAIN' ],
+          cpt: [
+            { when: { 'RAIN': 'T' }, then: { 'T': 0.01, 'F': 0.99 } },
+            { when: { 'RAIN': 'F' }, then: { 'T': 0.4, 'F': 0.6 } }
+          ]
+        },
+        'GRASS_WET': {
+          id: 'GRASS_WET',
+          states: [ 'T', 'F' ],
+          parents: [ 'RAIN', 'SPRINKLER' ],
+          cpt: [
+            { when: { 'RAIN': 'T', 'SPRINKLER': 'T' }, then: { 'T': 0.99, 'F': 0.01 } },
+            { when: { 'RAIN': 'T', 'SPRINKLER': 'F' }, then: { 'T': 0.8, 'F': 0.2 } },
+            { when: { 'RAIN': 'F', 'SPRINKLER': 'T' }, then: { 'T': 0.9, 'F': 0.1 } },
+            { when: { 'RAIN': 'F', 'SPRINKLER': 'F' }, then: { 'T': 0, 'F': 1 } }
+          ]
+        }
+      },
+      nodes: {
+        'RAIN': 'T'
+      },
+      given: {
+        'GRASS_WET': 'T'
+      }
+    };
+
+    payload.value = JSON.stringify(defaultPayload, null, 2);
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      try {
+        JSON.parse(payload.value);
+      } catch (ex) {
+        alert('JSON inválido');
+        return;
+      }
+
+      fetch('/', { method: 'POST', body: payload.value })
+        .then(x => x.text())
+        .then(x => alert(x));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "bayesjs-ws",
+  "version": "0.0.1",
+  "description": "Webservice for bayesjs",
+  "license": "MIT",
+  "scripts": {
+    "start": "micro src/index.js",
+    "prettify": "prettier --single-quote --write src/**/*.js"
+  },
+  "dependencies": {
+    "bayesjs": "^0.3.3",
+    "micro": "^7.3.0"
+  },
+  "devDependencies": {
+    "prettier": "^0.22.0"
+  }
+}
