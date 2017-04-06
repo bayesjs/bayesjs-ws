@@ -20,7 +20,8 @@ module.exports = async (req, res) => {
       const payload = await json(req);
       return infer(payload.network, payload.nodes, payload.given);
     }
+    default: {
+      return send(res, 405);
+    }
   }
-
-  return send(res, 404);
 };
